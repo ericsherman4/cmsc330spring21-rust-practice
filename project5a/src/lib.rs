@@ -1,3 +1,5 @@
+use std::convert::TryInto;
+
 pub mod mandelbrot;
 pub mod points;
 
@@ -6,14 +8,23 @@ pub mod points;
     If n is less than 0, return -1
 **/
 pub fn gauss(n: i32) -> i32 {
-    unimplemented!()
+    if n < -1 {
+        -1
+    }
+    else {
+        let mut accum = 0;
+        for i in 1..=n {
+            accum += i;
+        }
+        accum
+    }
 }
 
 /**
  * Adds one to the referenced integer.
  */
 pub fn add_one(n: &mut i32) {
-    unimplemented!()
+    *n +=1;
 }
 
 /**
@@ -21,7 +32,8 @@ pub fn add_one(n: &mut i32) {
  * See https://doc.rust-lang.org/std/string/struct.String.html.
  */
 pub fn rewrite_string(s: &mut String) {
-    unimplemented!()
+    // this technically works but not ideal
+    *s = vec!["a"; s.len()].join("");
 }
 
 /**
@@ -33,7 +45,24 @@ pub fn rewrite_string(s: &mut String) {
     Ex: to_decimal of [true, false, true, false] returns 10
 **/
 pub fn to_decimal(ls: [bool; 32]) -> u32 {
-    unimplemented!()
+    // let mut decimal:u32 = 0;
+    // let mut count:u32 = 32;
+    // for i in ls {
+    //     count -= 1; 
+    //     print!("{count}");
+    //     if i == true {
+    //         decimal += 2u32.pow(count);
+    //     }
+    // }
+    // decimal
+
+    let mut decimal = 0u32;
+    for (idx, bit) in ls.iter().enumerate() {
+        if *bit == true {
+            decimal += 2u32.pow((31-idx).try_into().unwrap())
+        }
+    }
+    decimal
 }
 
 /**
@@ -49,14 +78,25 @@ pub fn to_decimal(ls: [bool; 32]) -> u32 {
  * Therefore, collatz(4) = 2.
 */
 pub fn collatz(mut n: u64) -> u64 {
-    unimplemented!()
+    let mut res = 0;
+    while n != 1 {
+        n = if n%2 == 0 { n/2 } else { 3*n +1};
+        res +=1;
+    }
+    res
 }
+
 
 /**
  * Returns a vector containing collatz(1), collatz(2), ..., collatz(n).
  */
 pub fn collatz_times(n: u64) -> Vec<u64> {
-    unimplemented!()
+    let mut vec: Vec<u64> = vec![0;n.try_into().unwrap()];
+    for (i, x) in vec.iter_mut().enumerate() {
+        let collatz_num: u64 = (i + 1).try_into().unwrap();
+        *x = collatz(collatz_num);
+    }
+    vec
 }
 
 /** 
@@ -67,12 +107,22 @@ pub fn collatz_times(n: u64) -> Vec<u64> {
     EX: rotate [1,2,3,4] returns [2,3,4,1]
 **/
 pub fn rotate(lst: &[i32]) -> Vec<i32> {
-    unimplemented!()
+    if lst.len() == 0 {
+        vec![0;0]
+    }
+    else if lst.len() == 1 {
+        vec![lst[0]]
+    }
+    else {
+        let mut ans = lst[1..].to_vec();
+        ans.push(lst[0]);
+        ans
+    }
 }
 
 /**
  * Returns a new string whose contents is the concatenation of the two input slices.
  */
 pub fn concatenate_strings(s1: &str, s2: &str) -> String {
-    unimplemented!()
+    vec![s1,s2].join("") //probs not the most efficient..
 }
