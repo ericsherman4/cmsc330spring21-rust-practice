@@ -1,4 +1,7 @@
-use image::{ImageBuffer, RgbImage};
+use core::panic;
+use std::convert::TryInto;
+
+use image::{ImageBuffer, Pixel, RgbImage};
 
 fn new_image() -> RgbImage {
     ImageBuffer::new(512, 512)
@@ -32,10 +35,42 @@ fn new_image() -> RgbImage {
  * 
  */
 pub fn make_mandelbrot_image() -> RgbImage {
-    let image = new_image();
-    let (_width, _height) = image.dimensions();
+    let mut image = new_image();
+    let (width, height) = image.dimensions();
 
-    // Hint: make `image` mut and then modify it.
+    let max_iter  = 1000i32;
 
+    for i in 0..width {
+        for j in 0..height {
+            let x0 = scale_x(i as f64);
+            let y0 = scale_y(j as f64);
+
+            let (mut x,mut y, mut iter) = (0f64, 0f64, 0i32);
+
+            println!(" before {} {}", x*x, y*y);
+            while (x*x + y*y) <= 4.0f64 && iter < max_iter {
+                let xtemp = x*x - y*y + x0;
+                y = 2.0*x*y + y0;
+                x = xtemp;
+                iter +=1;
+            }
+            println!(" after {} {}", x*x, y*y);
+            println!("{iter}");
+            image.put_pixel(i, j, image::Rgb([iter as u8, iter as u8, iter as u8]));
+            return image;
+
+        } 
+    }
     image
+}
+
+fn scale_x(coord : f64) -> f64{
+    // original range is from 0 to 512
+    // map to -2.5 to 1 
+    coord * 3.5 / 512.0 - 2.5
+
+}
+
+fn scale_y (coord: f64) -> f64 {
+    coord * 2.0 / 512.0 - 1.0
 }
