@@ -47,17 +47,13 @@ pub fn make_mandelbrot_image() -> RgbImage {
 
             let (mut x,mut y, mut iter) = (0f64, 0f64, 0i32);
 
-            println!(" before {} {}", x*x, y*y);
             while (x*x + y*y) <= 4.0f64 && iter < max_iter {
                 let xtemp = x*x - y*y + x0;
                 y = 2.0*x*y + y0;
                 x = xtemp;
                 iter +=1;
             }
-            println!(" after {} {}", x*x, y*y);
-            println!("{iter}");
             image.put_pixel(i, j, image::Rgb([iter as u8, iter as u8, iter as u8]));
-            return image;
 
         } 
     }
